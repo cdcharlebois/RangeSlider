@@ -76,6 +76,24 @@
             <description>Called when the range slider has ended the slide.</description>
             <returnType type="Void" />
         </property>
+		<property key="tooltipTitle" type="string" required="false" defaultValue="">
+            <caption>Tooltip title</caption>
+            <category>Appearance</category>
+            <description>The title for the tooltip. Leave this empty to disable the tooltip.
+			Use ${1} as a replacement for the current value of the slider.</description>
+        </property>
+		<property key="tooltipOrientation" type="enumeration" defaultValue="top">
+            <caption>Tooltip Orientation</caption>
+            <category>Appearance</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="top">Top</enumerationValue>
+                <enumerationValue key="bottom">Bottom</enumerationValue>
+				<enumerationValue key="left">Left</enumerationValue>
+				<enumerationValue key="right">Right</enumerationValue>
+            </enumerationValues>
+        </property>
+		
     </properties>
 </widget>
 

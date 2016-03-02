@@ -1,14 +1,13 @@
-/*! rangeslider.js - v2.0.2 | (c) 2015 @andreruffert | MIT license | https://github.com/andreruffert/rangeslider.js */
+/*! rangeslider.js - v2.1.1 | (c) 2016 @andreruffert | MIT license | https://github.com/andreruffert/rangeslider.js */
 (function(factory) {
     'use strict';
 
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['RangeSlider/lib/jquery-1.11.2'], factory);
-    }
-    else if (typeof exports === 'object') {
+        define(['RangeSlider/lib/jquery-2.1.3'], factory);
+    } else if (typeof exports === 'object') {
         // CommonJS
-        factory(require('jquery'));
+        module.exports = factory(require('jquery'));
     } else {
         // Browser globals
         factory(jQuery);
@@ -163,7 +162,11 @@
                 inlineStyle[i] = hiddenParentNodes[i].style.cssText;
 
                 // visually hide
-                hiddenParentNodes[i].style.display = 'block';
+                if (hiddenParentNodes[i].style.setProperty) {
+                    hiddenParentNodes[i].style.setProperty('display', 'block', 'important');
+                } else {
+                    hiddenParentNodes[i].style.cssText += ';display: block !important';
+                }
                 hiddenParentNodes[i].style.height = '0';
                 hiddenParentNodes[i].style.overflow = 'hidden';
                 hiddenParentNodes[i].style.visibility = 'hidden';
@@ -260,7 +263,7 @@
         var _this = this;
         this.$window.on('resize.' + this.identifier, debounce(function() {
             // Simulate resizeEnd event.
-            delay(function() { _this.update(); }, 300);
+            delay(function() { _this.update(false, false); }, 300);
         }, 20));
 
         this.$document.on(this.startEvent, '#' + this.identifier + ':not(.' + this.options.disabledClass + ')', this.handleDown);
@@ -280,10 +283,6 @@
     Plugin.prototype.init = function() {
         this.update(true, false);
 
-        // Set initial value just in case it is not set already.
-        // Prevents trouble if we call `update(true)`
-        this.$element[0].value = this.value;
-
         if (this.onInit && typeof this.onInit === 'function') {
             this.onInit();
         }
@@ -295,7 +294,7 @@
         if (updateAttributes) {
             this.min    = tryParseFloat(this.$element[0].getAttribute('min'), 0);
             this.max    = tryParseFloat(this.$element[0].getAttribute('max'), 100);
-            this.value  = tryParseFloat(this.$element[0].value, this.min + (this.max-this.min)/2);
+            this.value  = tryParseFloat(this.$element[0].value, Math.round(this.min + (this.max-this.min)/2));
             this.step   = tryParseFloat(this.$element[0].getAttribute('step'), 1);
         }
 
@@ -316,7 +315,6 @@
     };
 
     Plugin.prototype.handleDown = function(e) {
-        e.preventDefault();
         this.$document.on(this.moveEvent, this.handleMove);
         this.$document.on(this.endEvent, this.handleEnd);
 
@@ -435,7 +433,7 @@
     };
 
     Plugin.prototype.setValue = function(value) {
-        if (value === this.value) {
+        if (value === this.value && this.$element[0].value !== '') {
             return;
         }
 
@@ -481,5 +479,7 @@
             }
         });
     };
+
+    return 'rangeslider.js is available in jQuery context e.g $(selector).rangeslider(options);';
 
 }));
