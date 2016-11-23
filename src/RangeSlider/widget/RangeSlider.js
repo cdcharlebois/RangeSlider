@@ -15,7 +15,7 @@ define([
     "dojo/html",
     "dojo/_base/event",
     "RangeSlider/lib/jquery-2.1.3",
-	"RangeSlider/lib/bootstrap.3.3.5",
+	"RangeSlider/lib/tooltip",
     "RangeSlider/lib/rangeslider",
     "dojo/text!RangeSlider/widget/template/RangeSlider.html"
 ], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoQuery, dojoClass, dojoStyle,
@@ -48,6 +48,11 @@ define([
 			$rangeInputNode: null, //jQuery node
 			_options: null,
 			_initialized: false,
+			$: null,
+
+			constructor: function() {
+				this.$ = _jQuery;
+			},
 
 			postCreate: function () {
 				this._updateRendering();
@@ -77,11 +82,11 @@ define([
 					onSlideEnd: dojoLang.hitch(this, this._onSlideEnd),
 					onInit: dojoLang.hitch(this, function () {
 						if (this.tooltipTitle != "") {
-							var node = $(".rangeslider__handle", this.rangeSliderNode);
+							var node = this.$(".rangeslider__handle", this.rangeSliderNode);
 							node.attr('data-toggle', "tooltip");
 							node.attr('data-placement', this.tooltipOrientation);
 							//this._setTooltipTitle();
-							$(".rangeslider__handle", this.rangeSliderNode).tooltip({
+							this.$(".rangeslider__handle", this.rangeSliderNode).tooltip({
 								'title' : dojoLang.hitch(this, this._setTooltipTitle)
 							});
 						}
@@ -115,7 +120,7 @@ define([
 						max = this._contextObj.get(this.maxAttr);
 
 					if (!this.$rangeInputNode) {
-						this.$rangeInputNode = $(this.rangeInputNode);
+						this.$rangeInputNode = this.$(this.rangeInputNode);
 					}
 					this.$rangeInputNode.rangeslider(this._options);
 
@@ -159,7 +164,7 @@ define([
 
 			_onSlideEnd: function (position, value) {
 				this._contextObj.set(this.valueAttr, this.rangeInputNode.value);
-				$(".rangeslider__handle", this.rangeSliderNode).tooltip('show');
+				this.$(".rangeslider__handle", this.rangeSliderNode).tooltip('show');
 
 				if (this.onSlideEndMF) {
 					mx.data.action({
@@ -177,7 +182,7 @@ define([
 					}, this);
 				}
 			},
-			
+
 			_setTooltipTitle: function () {
 				if (this.tooltipTitle != "") {
 					var title = this.tooltipTitle.replace(/\$\{1\}/, this.rangeInputNode.value);
@@ -240,7 +245,7 @@ define([
 					this._handles = [];
 				}
 
-				// When a mendix object exists create subscribtions. 
+				// When a mendix object exists create subscribtions.
 				if (this._contextObj) {
 					var objectHandle = this.subscribe({
 						guid: this._contextObj.getGuid(),
