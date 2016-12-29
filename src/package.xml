@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://www.mendix.com/package/1.0/">
-	<clientModule name="RangeSlider" version="1.4" xmlns="http://www.mendix.com/clientModule/1.0/">
-		<widgetFiles>
-			<widgetFile path="RangeSlider/RangeSlider.xml"/>
-		</widgetFiles>
-		<files>
-			<file path="RangeSlider/widget/"/>
-		</files>
-	</clientModule>
+    <clientModule name="RangeSlider" version="1.5.0" xmlns="http://www.mendix.com/clientModule/1.0/">
+        <widgetFiles>
+            <widgetFile path="RangeSlider/RangeSlider.xml"/>
+        </widgetFiles>
+        <files>
+            <file path="RangeSlider/widget/"/>
+        </files>
+    </clientModule>
 </package>
