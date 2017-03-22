@@ -166,10 +166,9 @@ define([
             this.$(".rangeslider__handle", this.rangeSliderNode).tooltip("show");
 
             if (this.onSlideEndMF) {
-                mx.data.action({
+                mx.ui.action(this.onSlideEndMF, {
                     params: {
                         applyto: "selection",
-                        actionname: this.onSlideEndMF,
                         guids: [this._contextObj.getGuid()]
                     },
                     callback: function (obj) {
