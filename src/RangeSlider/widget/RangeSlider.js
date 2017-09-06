@@ -18,7 +18,7 @@ define([
     "RangeSlider/lib/tooltip",
     "RangeSlider/lib/rangeslider",
     "dojo/text!RangeSlider/widget/template/RangeSlider.html"
-], function (declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoQuery, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, _bootstrap, _rangeslider, widgetTemplate) {
+], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoQuery, dojoClass, dojoStyle, dojoConstruct, dojoArray, lang, dojoText, dojoHtml, dojoEvent, _jQuery, _bootstrap, _rangeslider, widgetTemplate) {
     "use strict";
 
     return declare("RangeSlider.widget.RangeSlider", [_WidgetBase, _TemplatedMixin], {
@@ -47,16 +47,16 @@ define([
         _initialized: false,
         $: null,
 
-        constructor: function () {
+        constructor: function() {
             this.$ = _jQuery.noConflict(true);
         },
 
-        postCreate: function () {
+        postCreate: function() {
             this._updateRendering();
             this._setupEvents();
         },
 
-        update: function (obj, callback) {
+        update: function(obj, callback) {
             this._contextObj = obj;
 
             this._resetSubscriptions();
@@ -66,7 +66,7 @@ define([
         },
 
         // Attach events to HTML dom elements
-        _setupEvents: function () {
+        _setupEvents: function() {
             if (!this.stepAttr || this.stepAttr === "") {
                 dojoProp.set(this.rangeInputNode, {
                     step: this.step
@@ -78,7 +78,7 @@ define([
                 fillClass: "rangeslider__fill " + this.fillClass,
                 handleClass: "rangeslider__handle " + this.handleClass,
                 onSlideEnd: lang.hitch(this, this._onSlideEnd),
-                onInit: lang.hitch(this, function () {
+                onInit: lang.hitch(this, function() {
                     if (this.tooltipTitle !== "") {
                         var node = this.$(".rangeslider__handle", this.rangeSliderNode);
                         node.attr("data-toggle", "tooltip");
@@ -88,12 +88,15 @@ define([
                             "title": lang.hitch(this, this._setTooltipTitle)
                         });
                     }
-                })
+                }),
+                startEvent: ['mousedown', 'touchstart'],
+                moveEvent: ['mousemove', 'touchmove'],
+                endEvent: ['mouseup', 'touchend']
             };
 
             dojoClass.add(this.rangeSliderNode, this.orientation);
 
-            this.connect(this.rangeInputNode, "change", function (e) {
+            this.connect(this.rangeInputNode, "change", function(e) {
                 // Function from mendix object to set an attribute.
                 this._contextObj.set(this.valueAttr, this.rangeInputNode.value);
                 this._setTooltipTitle();
@@ -101,7 +104,7 @@ define([
         },
 
         // Rerender the interface.
-        _updateRendering: function (callback) {
+        _updateRendering: function(callback) {
             logger.debug(this.id + "._updateRendering");
             this.rangeInputNode.disabled = this.readOnly;
 
@@ -137,7 +140,7 @@ define([
                 }
 
                 var _this = this;
-                return setTimeout(function () {
+                return setTimeout(function() {
                     dojoProp.set(_this.rangeInputNode, {
                         min: min,
                         max: max
@@ -161,7 +164,7 @@ define([
             this._clearValidations();
         },
 
-        _onSlideEnd: function (position, value) {
+        _onSlideEnd: function(position, value) {
             this._contextObj.set(this.valueAttr, this.rangeInputNode.value);
             this.$(".rangeslider__handle", this.rangeSliderNode).tooltip("show");
 
@@ -172,17 +175,17 @@ define([
                         actionname: this.onSlideEndMF,
                         guids: [this._contextObj.getGuid()]
                     },
-                    callback: function (obj) {
+                    callback: function(obj) {
                         //TODO what to do when all is ok!
                     },
-                    error: lang.hitch(this, function (error) {
+                    error: lang.hitch(this, function(error) {
                         console.log(this.id + ": An error occurred while executing microflow: " + error.description);
                     })
                 }, this);
             }
         },
 
-        _setTooltipTitle: function () {
+        _setTooltipTitle: function() {
             if (this.tooltipTitle !== "") {
                 var title = this.tooltipTitle.replace(/\$\{1\}/, this.rangeInputNode.value);
                 // var node = $(".rangeslider__handle", this.rangeSliderNode);
@@ -194,7 +197,7 @@ define([
         },
 
         // Handle validations.
-        _handleValidation: function (validations) {
+        _handleValidation: function(validations) {
             this._clearValidations();
 
             var validation = validations[0],
@@ -209,13 +212,13 @@ define([
         },
 
         // Clear validations.
-        _clearValidations: function () {
+        _clearValidations: function() {
             dojoConstruct.destroy(this._alertDiv);
             this._alertDiv = null;
         },
 
         // Show an error message.
-        _showError: function (message) {
+        _showError: function(message) {
             if (this._alertDiv !== null) {
                 dojoHtml.set(this._alertDiv, message);
                 return true;
@@ -228,15 +231,15 @@ define([
         },
 
         // Add a validation.
-        _addValidation: function (message) {
+        _addValidation: function(message) {
             this._showError(message);
         },
 
         // Reset subscriptions.
-        _resetSubscriptions: function () {
+        _resetSubscriptions: function() {
             // Release handles on previous object, if any.
             if (this._handles) {
-                this._handles.forEach(lang.hitch(this,function (handle) {
+                this._handles.forEach(lang.hitch(this, function(handle) {
                     this.unsubscribe(handle);
                 }));
                 this._handles = [];
@@ -246,7 +249,7 @@ define([
             if (this._contextObj) {
                 var objectHandle = this.subscribe({
                     guid: this._contextObj.getGuid(),
-                    callback: lang.hitch(this, function (guid) {
+                    callback: lang.hitch(this, function(guid) {
                         this._updateRendering();
                     })
                 });
@@ -266,17 +269,17 @@ define([
             }
         },
 
-        _subscribeAttr: function (entityAttr) {
+        _subscribeAttr: function(entityAttr) {
             return this.subscribe({
                 guid: this._contextObj.getGuid(),
                 attr: entityAttr,
-                callback: lang.hitch(this, function (guid, attr, attrValue) {
+                callback: lang.hitch(this, function(guid, attr, attrValue) {
                     this._updateRendering();
                 })
             });
         },
 
-        _executeCallback: function (cb, from) {
+        _executeCallback: function(cb, from) {
             logger.debug(this.id + "._executeCallback" + (from ? " from " + from : ""));
             if (cb && typeof cb === "function") {
                 cb();
